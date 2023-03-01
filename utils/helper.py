@@ -7,6 +7,8 @@ import spacy
 
 nlp = spacy.load('en_core_web_sm')
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print(torch.cuda.is_available())
 
 def prep_each_document(document: str):
     unsorted_sent_words = [[token.text for token in sent] for sent in nlp(document).sents]
