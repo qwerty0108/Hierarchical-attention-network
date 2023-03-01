@@ -25,7 +25,7 @@ validation_dataset = loader.YelpLoader(path_to_csv=os.path.join(constant.DATASET
 test_dataset = loader.YelpLoader(path_to_csv=os.path.join(constant.DATASET_FOLDER, constant.TEST_FILE))
 
 # DataLoaders
-training_dataloader = DataLoader(training_dataset, batch_size=15, shuffle=True)
+training_dataloader = DataLoader(training_dataset, batch_size=1, shuffle=True)
 validation_dataloader = DataLoader(validation_dataset, batch_size=1, shuffle=False)
 test_dataloader = DataLoader(test_dataset, batch_size=1, shuffle=False)
 
@@ -44,7 +44,10 @@ HAN = architecture.HanModel(
     randomize_init_hidden=True
 )
 
-criterion = nn.CrossEntropyLoss()
+weights = [0.8787, 0.9162, 0.9075, 0.775, 0.5225]
+class_weights = torch.FloatTensor(weights)
+
+criterion = nn.CrossEntropyLoss(weight=class_weights)
 optimizer = optim.SGD(HAN.parameters(), lr=0.005, momentum=0.9)
 
 # Run Test Dataset before Training
@@ -86,15 +89,15 @@ print("Predicting on Test Set")
 true_test_labels, pred_test_labels = helper.model_test(best_HAN, test_dataloader)
 print(classification_report(y_true=true_test_labels, y_pred=pred_test_labels))
 
-#print("Writing the Loss Graph")
-#plt.figure()
-#plt.xlabel('Epoch')
-#plt.ylabel('Loss')
-#plt.plot(epoch_training_loss_collect, label='training')
-#plt.plot(epoch_validation_loss_collect, label='validation')
-#plt.legend(loc="upper right")
-#plt.savefig("loss.png")
+# print("Writing the Loss Graph")
+# plt.figure()
+# plt.xlabel('Epoch')
+# plt.ylabel('Loss')
+# plt.plot(epoch_training_loss_collect, label='training')
+# plt.plot(epoch_validation_loss_collect, label='validation')
+# plt.legend(loc="upper right")
+# plt.savefig("loss.png")
 
-#print("Writing the Confusion Matrix")
-#loss_fig = helper.plot_confusion(true_test_labels, pred_test_labels, training_dataset.ctgry)
-#loss_fig.savefig("confusion.png")
+# print("Writing the Confusion Matrix")
+# loss_fig = helper.plot_confusion(true_test_labels, pred_test_labels, training_dataset.ctgry)
+# loss_fig.savefig("confusion.png")
